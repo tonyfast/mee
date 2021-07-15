@@ -1,0 +1,9 @@
+_build/
+_build/jupyter_execute
+.vscode
+*-checkpoint*
+__pycache__
+.doit*
+xxx.sqlite
+Untitled*
+.env

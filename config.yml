@@ -1,0 +1,40 @@
+title: tonyfast
+author: tonyfast
+exclude_patterns: []
+only_build_toc_files: true
+execute:
+  execute_notebooks: off
+  cache: ''
+  exclude_patterns: []
+  timeout: 30
+  run_in_temp: true
+  allow_errors: true
+parse:
+  myst_enable_extensions:
+  - linkify
+  - substitution
+  - dollarmath
+  - colon_fence
+  myst_url_schemes:
+  - mailto
+  - http
+  - https
+html:
+  favicon: ''
+  use_edit_page_button: false
+  use_repository_button: false
+  use_issues_button: false
+  use_multitoc_numbering: true
+  extra_navbar: ''
+  extra_footer: ''
+  google_analytics_id: ''
+  home_page_in_navbar: true
+  baseurl: ''
+  comments:
+    hypothesis: false
+    utterances: false
+repository: {}
+launch_buttons: {}
+latex:
+  latex_engine: pdflatex
+  use_jupyterbook_latex: true

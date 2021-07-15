@@ -1,0 +1,29 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "mee"
+author = "tonyfast"
+author-email = "tony.fast@gmail.com"
+home-page = "https://deathbeds.github.io"
+classifiers = ["License :: OSI Approved :: MIT License"]
+
+requires = [
+    "git",
+    "requests",
+    "requests_cache",
+    "dotenv",
+    "jinja2",
+    "doit",
+    "stringcase",
+    "maya",
+    "ruamel_yaml",
+    "pandas",
+    "pathspec",
+    "configupdater",
+    "uritemplate",
+]
+
+[tool.flit.metadata.requires-extra]
+docs = ["jupyter-book"]
