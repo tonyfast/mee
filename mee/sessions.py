@@ -37,7 +37,8 @@ def config(session, mode):
     cwd, name, *args = session.posargs
 
     (mode == "dev" and prepare_dev or prepare_user)(session, "config")
-    session.run(*"python -m mee tasks list".split())
+    session.run(*"python -m mee tasks config list".split())
+    session.run(*"python -m mee tasks build list".split())
     session.run(*f"python -m mee.tasks.dev dev -n {name}".split())
     session.run(*f"python -m mee.tasks.config submodules".split())
     session.run(*f"python -m mee.tasks.config jb mkdocs readme".split())
