@@ -10,7 +10,7 @@ home-page = "https://deathbeds.github.io"
 classifiers = ["License :: OSI Approved :: MIT License"]
 
 
-requires = ["doit", "uritemplate", "pydantic", "pandas", "click"]
+requires = ["doit", "uritemplate", "pydantic", "pandas", "typer"]
 
 [tool.flit.metadata.requires-extra]
 doc = ["jupyter-book", "jupyterbook_latex"]
