@@ -229,7 +229,7 @@ def task_readme():
     def export_readme():
         from .compat import readme
 
-        Path("readme.md").write_text(readme.get_readme(COLLECTOR.init()))
+        Path(NAME, "readme.md").write_text(readme.get_readme(COLLECTOR.init()))
 
     return dict(
         actions=[export_readme],
