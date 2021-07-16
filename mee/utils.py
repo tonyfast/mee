@@ -34,7 +34,7 @@ def write(file, data):
         yaml = YAML()
 
         if file.exists():
-            data = utils.merge(yaml.load(file.read_text()), data)
+            data = merge(yaml.load(file.read_text()), data)
         with file.open("w") as f:
             yaml.dump(data, f)
 
@@ -45,14 +45,14 @@ def write(file, data):
 
         if file.exists():
             cfg.read(file)
-            data = utils.merge(cfg, data)
+            data = merge(cfg, data)
         file.write_text(str(cfg))
 
     if file.suffix in ".toml".split():
         from tomlkit import parse, dumps
 
         if file.exists():
-            data = utils.merge(parse(file.read_text()), data)
+            data = merge(parse(file.read_text()), data)
         file.write_text(dumps(data))
 
 
