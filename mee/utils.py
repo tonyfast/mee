@@ -1,7 +1,6 @@
-import contextlib
-import sys
-from functools import singledispatch as register
+import contextlib, sys
 from pathlib import Path
+from functools import singledispatch as register
 
 
 @contextlib.contextmanager
@@ -10,30 +9,6 @@ def argv(args, *xs):
     sys.argv = sys.argv[:1] + args.split() + list(xs)
     yield
     sys.argv = argv
-
-
-def main(object=None, argv=None, raises=False):
-    """a generic runner for tasks in process."""
-
-    import sys
-
-    import doit
-
-    if callable(object):
-        object = [object]
-
-    if argv is None:
-        argv = sys.argv[1:]
-
-    if isinstance(argv, str):
-        argv = argv.split()
-
-    main = doit.doit_cmd.DoitMain(doit.cmd_base.ModuleTaskLoader(object))
-
-    code = main.run(argv)
-    if raises:
-        sys.exit(code)
-    return code
 
 
 def write(file, data):
@@ -59,7 +34,7 @@ def write(file, data):
         file.write_text(str(cfg))
 
     if file.suffix in ".toml".split():
-        from tomlkit import dumps, parse
+        from tomlkit import parse, dumps
 
         if file.exists():
             data = merge(parse(file.read_text()), data)
