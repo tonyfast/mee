@@ -4,9 +4,9 @@ from pathlib import Path
 import typer
 
 context_settings = dict(allow_extra_args=True, ignore_unknown_options=True)
-app = typer.Typer(add_completion=False, help="mee is a tool to manage your entropy")
+main = typer.Typer(add_completion=False, help="mee is a tool to manage your entropy")
 tasks = typer.Typer(name="tasks", help="doit file tasks")
-app.add_typer(tasks)
+main.add_typer(tasks)
 
 
 @tasks.command(context_settings=context_settings)
@@ -26,7 +26,7 @@ def build(ctx: typer.Context):
     main(vars(build))
 
 
-@app.command(context_settings=context_settings)
+@main.command(context_settings=context_settings)
 def sessions(ctx: typer.Context, name: str):
     now = Path().absolute()
     runner = Path(__file__).parent / "sessions.py"

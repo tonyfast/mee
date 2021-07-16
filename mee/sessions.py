@@ -20,9 +20,7 @@ def prepare(session):
 
 def prepare_user(session, deps):
     with prepare(session):
-        session.run(
-            *f"pipe install git+https://github.com/tonyfast/mee.git[{deps}]".split()
-        )
+        session.run(*f"pip install git+https://github.com/tonyfast/mee".split())
 
 
 def prepare_dev(session, deps):
