@@ -1,58 +1,17 @@
 import json
-import operator
 import os
 from pathlib import Path
 
 import doit
 from doit.loader import create_after
-from doit.task import create_action
+from doit.task import clean_targets
 
-from . import models, urls, utils
-
-if Path(".env").exists():
-    import dotenv
-
-    dotenv.load_dotenv(".env")
-
-DOIT_CONFIG = dict(
-    report="json",
-    verbosity=2,
-)
-
-COLLECTOR = models.Collector()
-NAME = os.getenv("GITHUB_ACTOR") or ""
+from .. import urls, utils
+from . import COLLECTOR, NAME, get_time
+from .dev import *
 
 
-class SINCE:
-    params = [
-        dict(
-            name="name",
-            short="n",
-            default=os.getenv("GITHUB_ACTOR") or "",
-            type=str,
-        ),
-        dict(name="since", short="s", default="three months ago", type=str),
-    ]
-
-
-def get_time(since, round="day"):
-    import datetime
-
-    import maya
-    from maya import MayaDT
-
-    time = maya.when(since)
-    attrs = "year month day hour minute second microsecond".split()
-    l = len(attrs)
-    id = attrs.index(round) + 1
-    args = operator.attrgetter(*attrs[:id])(time)
-    args += tuple([0] * len(attrs[id:]))
-    return MayaDT.from_datetime(
-        datetime.datetime(*args, time.datetime().tzinfo)
-    ).iso8601()
-
-
-def get(name=os.getenv("GITHUB_ACTOR") or "", since="three months ago"):
+def get(name=NAME, since="three months ago"):
     import requests
     import requests_cache
 
@@ -87,7 +46,7 @@ def task_submodule():
 
 
 def task_gist_api():
-    return dict(actions=[get], params=SINCE.params, targets=["gists.json"])
+    return dict(actions=[get], params=SINCE.params, targets=[NAME + "/gists.json"])
 
 
 def task_dev():
@@ -107,7 +66,7 @@ def task_dev():
 
 
 @create_after("gist_api")
-def task_gist_submodules():
+def task_submodules():
     try:
         with open("gists.json") as file:
             data = json.load(file)
@@ -138,63 +97,9 @@ def task_git_init():
     return dict(actions=["git init"], uptodate=[Path(".git").exists()])
 
 
-# def task_start():
-#     """update current gist information from the github api"""
-
-#     def update(name, since):
-#         global self
-#         self = collector.Collector(since=since)
-#         if not self.name:
-#             assert False, "name is required for development"
-#         self.prior()
-#         import json
-
-#         (self.path / "gists.json").write_text(
-#             json.dumps(
-#                 self.gists[self.gists.description.astype(bool)]
-#                 .files.apply(list)
-#                 .to_dict()
-#             )
-#         )
-
-#     return dict(
-#         actions=[update],
-#         targets=["gists.json"],
-#         task_dep=["dev"],
-#         params=[
-#             dict(
-#                 name="name",
-#                 short="n",
-#                 default=os.getenv("GITHUB_ACTOR") or "",
-#                 type=str,
-#             ),
-#             dict(name="since", short="s", default="three months ago", type=str),
-#         ],
-#     )
-
-
-# def task_submodules():
-#     """update on disk submodules"""
-
-#     def update():
-#         import git
-
-#         global self
-#         for k, v in json.loads((self.path / "gists.json").read_text()).items():
-#             to = self.path / self.name
-#             to.mkdir(exist_ok=True, parents=True)
-#             to /= k.rpartition("/")[2]
-#             try:
-#                 self.repo.git.execute(f"""git submodule add {k} {to}""".split())
-#             except git.GitCommandError:
-#                 self.repo.git.execute(f"""git submodule add --force {k} {to}""".split())
-
-#     return dict(file_dep=["gists.json"], actions=[update])
-
-
 def task_jb():
     """write the jupyter book configuration files"""
-    from .compat import jb
+    from ..compat import jb
 
     def export_toc():
         utils.write("toc.yml", jb.get_toc(COLLECTOR.init()).dict())
@@ -206,12 +111,13 @@ def task_jb():
         file_dep=[".gitmodules"],
         actions=[export_toc, export_config],
         targets=["toc.yml", "config.yml"],
+        clean=[clean_targets],
     )
 
 
 def task_mkdocs():
     """configure mkdocs"""
-    from .compat import mkdocs
+    from ..compat import mkdocs
 
     def export_mkdocs():
         utils.write("mkdocs.yml", mkdocs.get_mkdocs(COLLECTOR.init()).dict())
@@ -220,6 +126,7 @@ def task_mkdocs():
         file_dep=[".gitmodules"],
         actions=[export_mkdocs],
         targets=["mkdocs.yml"],
+        clean=[clean_targets],
     )
 
 
@@ -234,7 +141,7 @@ def task_mkdocs_build():
 
 def task_readme():
     def export_readme():
-        from .compat import readme
+        from ..compat import readme
 
         Path(NAME, "readme.md").write_text(readme.get_readme(COLLECTOR.init()))
 
@@ -242,6 +149,7 @@ def task_readme():
         actions=[export_readme],
         targets=[NAME + "/readme.md"],
         file_dep=[".gitmodules", "gists.json"],
+        clean=[clean_targets],
     )
 
 
@@ -249,26 +157,12 @@ def task_conf_py():
     """write the sphinx conf.py file"""
     return dict(
         actions=["jb config sphinx --toc toc.yml --config config.yml . > conf.py"],
-        file_dep=["readme.md", "toc.yml", "config.yml"],
+        file_dep=[Path(NAME, "readme.md"), "toc.yml", "config.yml"],
         targets=["conf.py"],
     )
 
 
-# def task_sphinx():
-#     """build the sphinx documentation"""
-#     return dict(
-#         actions=["sphinx-build . _build/html/"],
-#         targets=["_build/html/index.html"],
-#         file_dep=["conf.py"],
-#     )
+if __name__ == "__main__":
+    from . import main
 
-
-# def task_readme():
-#     """create a readme summary for your works"""
-
-#     def export():
-#         global self
-#         self.post()
-#         (self.path / "readme.md").write_text(self.get_readme())
-
-#     return dict(actions=[export], targets=["readme.md"], task_dep=["submodules"])
+    main(globals())

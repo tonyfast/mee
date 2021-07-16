@@ -1,5 +1,6 @@
-from ..models import BaseModel, Field
 from typing import List, Optional
+
+from ..models import BaseModel, Field
 
 
 def get_mkdocs(df):

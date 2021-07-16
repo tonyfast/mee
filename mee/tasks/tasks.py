@@ -7,49 +7,7 @@ import doit
 from doit.loader import create_after
 from doit.task import create_action
 
-from . import models, urls, utils
-
-if Path(".env").exists():
-    import dotenv
-
-    dotenv.load_dotenv(".env")
-
-DOIT_CONFIG = dict(
-    report="json",
-    verbosity=2,
-)
-
-COLLECTOR = models.Collector()
-NAME = os.getenv("GITHUB_ACTOR") or ""
-
-
-class SINCE:
-    params = [
-        dict(
-            name="name",
-            short="n",
-            default=os.getenv("GITHUB_ACTOR") or "",
-            type=str,
-        ),
-        dict(name="since", short="s", default="three months ago", type=str),
-    ]
-
-
-def get_time(since, round="day"):
-    import datetime
-
-    import maya
-    from maya import MayaDT
-
-    time = maya.when(since)
-    attrs = "year month day hour minute second microsecond".split()
-    l = len(attrs)
-    id = attrs.index(round) + 1
-    args = operator.attrgetter(*attrs[:id])(time)
-    args += tuple([0] * len(attrs[id:]))
-    return MayaDT.from_datetime(
-        datetime.datetime(*args, time.datetime().tzinfo)
-    ).iso8601()
+from .. import models, urls, utils
 
 
 def get(name=os.getenv("GITHUB_ACTOR") or "", since="three months ago"):

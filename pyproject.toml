@@ -9,25 +9,26 @@ author-email = "tony.fast@gmail.com"
 home-page = "https://deathbeds.github.io"
 classifiers = ["License :: OSI Approved :: MIT License"]
 
-requires = [
+
+requires = ["doit", "uritemplate", "pydantic", "pandas"]
+
+[tool.flit.metadata.requires-extra]
+doc = ["jupyter-book", "jupyterbook_latex"]
+mkdocs = ["mkdocs", "mkdocs-jupyter"]
+dev = ["python-dotenv"]
+config = [
     "configupdater",
     "doit",
     "jinja2",
     "maya",
-    "pandas",
     "pathspec",
-    "pydantic",
-    "python-dotenv",
     "GitPython",
     "requests_cache",
     "requests",
     "ruamel.yaml",
     "stringcase",
-    "uritemplate",
 ]
 
-[tool.flit.metadata.requires-extra]
-docs = ["jupyter-book"]
 
 [tool.flit.scripts]
 mee = "mee.__main__:main"

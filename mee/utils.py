@@ -1,5 +1,15 @@
-from pathlib import Path
+import contextlib
+import sys
 from functools import singledispatch as register
+from pathlib import Path
+
+
+@contextlib.contextmanager
+def argv(args, *xs):
+    argv = sys.argv
+    sys.argv = sys.argv[:1] + args.split() + list(xs)
+    yield
+    sys.argv = argv
 
 
 def main(object=None, argv=None, raises=False):
@@ -49,7 +59,7 @@ def write(file, data):
         file.write_text(str(cfg))
 
     if file.suffix in ".toml".split():
-        from tomlkit import parse, dumps
+        from tomlkit import dumps, parse
 
         if file.exists():
             data = merge(parse(file.read_text()), data)
