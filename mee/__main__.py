@@ -50,4 +50,4 @@ def sessions(ctx: typer.Context, name: str):
 
 
 if __name__ == "__main__":
-    app()
+    main()
