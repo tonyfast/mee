@@ -1,4 +1,5 @@
 from pathlib import Path
+from functools import singledispatch as register
 
 
 def main(object=None, argv=None, raises=False):
@@ -26,11 +27,9 @@ def main(object=None, argv=None, raises=False):
 
 
 def write(file, data):
-    from schemata import utils
-
     file = Path(file)
     if file.suffix in ".yaml .yml".split():
-        from ruamel_yaml import YAML
+        from ruamel.yaml import YAML
 
         yaml = YAML()
 
@@ -61,7 +60,7 @@ def read(file, suffix=None):
     file = Path(file)
     suffix = suffix or file.suffix
     if suffix in ".yaml .yml".split():
-        from ruamel_yaml import YAML
+        from ruamel.yaml import YAML
 
         yaml = YAML()
         return yaml.load(file.read_text())
@@ -75,3 +74,30 @@ def read(file, suffix=None):
         from tomlkit import parse
 
         return parse(file.read_text())
+
+
+@register
+def merge(a, *b):
+    while len(b) > 1:
+        b = (merge(*b),)
+
+    if b:
+        b = b[0]
+        if isinstance(b, type):
+            return b
+
+        for k, v in b.items():
+            if k in a:
+                if isinstance(a[k], dict):
+                    a[k] = merge(a[k], v)
+                elif isinstance(a, (list, set, tuple)):
+                    a[k].extend(v)
+
+            else:
+                a[k] = v
+    return a
+
+
+@merge.register
+def merge_type(a: type):
+    return merge(*(y for x in a.__mro__ for y in (getattr(x, "__annotations__", {}),)))

@@ -10,20 +10,24 @@ home-page = "https://deathbeds.github.io"
 classifiers = ["License :: OSI Approved :: MIT License"]
 
 requires = [
-    "git",
-    "requests",
-    "requests_cache",
-    "dotenv",
-    "jinja2",
+    "configupdater",
     "doit",
-    "stringcase",
+    "jinja2",
     "maya",
-    "ruamel_yaml",
     "pandas",
     "pathspec",
-    "configupdater",
+    "pydantic",
+    "python-dotenv",
+    "GitPython",
+    "requests_cache",
+    "requests",
+    "ruamel.yaml",
+    "stringcase",
     "uritemplate",
 ]
 
 [tool.flit.metadata.requires-extra]
 docs = ["jupyter-book"]
+
+[tool.flit.scripts]
+mee = "mee.__main__:main"
