@@ -10,12 +10,18 @@ home-page = "https://deathbeds.github.io"
 classifiers = ["License :: OSI Approved :: MIT License"]
 
 
-requires = ["doit", "uritemplate", "pydantic", "pandas", "typer"]
+requires = [
+    "doit",
+    "uritemplate",
+    "pydantic",
+    "pandas",
+    "typer",
+    "python-dotenv",
+]
 
 [tool.flit.metadata.requires-extra]
 doc = ["jupyter-book", "jupyterbook_latex"]
 mkdocs = ["mkdocs", "mkdocs-jupyter"]
-dev = ["python-dotenv"]
 config = [
     "configupdater",
     "doit",
