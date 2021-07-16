@@ -21,7 +21,7 @@ def prepare(session):
 def prepare_user(session, deps):
     with prepare(session):
         session.run(
-            *f"pip install git+https://github.com/tonyfast/mee#egg=mee[deps]".split()
+            *f"pip install git+https://github.com/tonyfast/mee#egg=mee[{deps}]".split()
         )
 
 
