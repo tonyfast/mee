@@ -2,4 +2,5 @@ texlive-latex-recommended
 texlive-latex-extra
 texlive-fonts-recommended
 texlive-fonts-extra
-texlive-xetex latexmk
+texlive-xetex
+latexmk
