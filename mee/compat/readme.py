@@ -1,15 +1,12 @@
 import json
 import collections
-from mee.compat.jb import StdErr
 from pathlib import Path
 
-from pathspec.pathspec import PathSpec
-from ..configure import task_configure_r
 from .. import SETTINGS, main
 from doit.task import clean_targets
 
 
-def get_readme():
+def get_readme() -> str:
     import sqlite_utils, sqlite3, maya
 
     content = {}
@@ -26,12 +23,12 @@ def get_readme():
         row = content[when]
         if not row["description"]:
             continue
+        if not row["public"]:
+            continue
         days[format(when, "%D")].append(
             f"""### {row["description"]}\n\n"""
             + "\n".join(f"""* [{x}]({x})""" for x in json.loads(row["files"]))
         )
-    from re import compile, IGNORECASE
-    from fnmatch import translate
 
     try:
         profile = (
@@ -60,7 +57,6 @@ def task_readme():
         actions=[do],
         file_dep=[".gitmodules"],
         targets=[readme],
-        setup=["configure_r"],
         clean=[clean_targets],
     )
 
