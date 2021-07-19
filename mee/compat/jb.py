@@ -1,3 +1,9 @@
+from doit.task import clean_targets
+from ..settings import Settings
+from functools import partial
+from .. import tools, main, DOIT_CONFIG, SETTINGS
+import json
+from pathlib import Path
 from ..models import (
     Any,
     AnyUrl,
@@ -111,7 +117,7 @@ class Config(NonNull):
 
     class Latex(BaseModel):
         latex_engine: TEX = "pdflatex"
-        use_jupyterbook_latex: bool = True
+        use_jupyterbook_latex: bool = False
 
     class Buttons(BaseModel):
         pass
@@ -126,8 +132,8 @@ class Config(NonNull):
     author: Optional[str]
     copyright: Optional[str]
     logo: Optional[str]
-    exclude_patterns: List = Field(default_factory=list)
-    only_build_toc_files: bool = True
+    exclude_patterns: List = Field(default_factory=partial(list, [".nox", "_build"]))
+    only_build_toc_files: bool = False
     stderr_output: Optional[StdErr]
 
     execute: Optional[Execute] = Field(default_factory=Execute)
@@ -161,6 +167,65 @@ def get_toc(df):
     return Toc(**toc)
 
 
-def get_config(df):
-    owner = df["owner"][0]
-    return Config(name=owner["login"], title=owner["login"], logo=owner["avatar_url"])
+def get_toc():
+    import sqlite_utils, sqlite3, maya
+
+    content = {}
+    SETTINGS.config.initialize()
+    db = sqlite_utils.Database(sqlite3.connect(SETTINGS.db))
+    for name, info in SETTINGS.config.gitmodules.items():
+        if name.startswith("submodule"):
+            row = db["gist"].get(info["url"])
+            content[maya.MayaDT.from_iso8601(row["created_at"])] = row
+
+    parts = []
+    for when in sorted(content, reverse=True):
+        row = content[when]
+        if not row["description"]:
+            continue
+        parts.append(
+            dict(
+                caption=f"""{when:%D} {row["description"]}""",
+                chapters=[
+                    dict(
+                        file=str(
+                            Path(
+                                db["owners"].get(row["owner"])["login"], row["id"], x
+                            ).with_suffix("")
+                        )
+                    )
+                    for x in json.loads(row["files"])
+                ],
+            )
+        )
+
+    return Toc(root=f"""{SETTINGS.name}/readme""", parts=parts)
+
+
+def get_config():
+    return Config(name=SETTINGS.name, title=SETTINGS.name)
+
+
+task_yaml_r = tools.requires(ruamel="ruamel.yaml")
+
+
+def task_jb():
+    """write the jupyter book configuration files"""
+
+    def export_toc():
+        tools.write("toc.yml", get_toc().dict())
+
+    def export_config():
+        tools.write("config.yml", get_config().dict())
+
+    return dict(
+        file_dep=[".gitmodules"],
+        actions=[export_toc, export_config],
+        targets=["toc.yml", "config.yml"],
+        clean=[clean_targets],
+        setup=["yaml_r"],
+    )
+
+
+if __name__ == "__main__":
+    main(globals())

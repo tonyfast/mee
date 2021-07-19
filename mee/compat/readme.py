@@ -1,30 +1,55 @@
-def get_readme(df):
-    owner = df["owner"][0]
+import json
+import collections
+from pathlib import Path
+from ..configure import task_configure_r
+from .. import SETTINGS, main
+from doit.task import clean_targets
 
-    body = f"""# {owner["login"]}
-    """
-    df = df[df.dir.apply(str).str.endswith(tuple(".ipynb .md .markdown".split()))]
-    for day in df.index.get_level_values("updated_at").drop_duplicates():
-        s = day.to_pydatetime().strftime("%D")
-        body += f"""
-        
-## {s}
 
-"""
+def get_readme():
+    import sqlite_utils, sqlite3, maya
 
-        for path in df.loc[day].index.get_level_values(0).drop_duplicates():
-            for id in df.loc[day].loc[path].index.get_level_values(0).drop_duplicates():
-                g = df.loc[day].loc[path].loc[id]
+    content = {}
+    SETTINGS.config.initialize()
 
-                body += f"""
-> {g.description[0].lstrip()}
-    
-"""
-                for i, x in g.iterrows():
-                    body += f"""* {i}
-"""
-                else:
-                    body += """
----
-"""
-    return body
+    db = sqlite_utils.Database(sqlite3.connect(SETTINGS.db))
+    for name, info in SETTINGS.config.gitmodules.items():
+        if name.startswith("submodule"):
+            row = db["gist"].get(info["url"])
+            content[maya.MayaDT.from_iso8601(row["created_at"])] = row
+
+    days = collections.defaultdict(list)
+    for when in sorted(content, reverse=True):
+        row = content[when]
+        if not row["description"]:
+            continue
+        days[format(when, "%D")].append(
+            f"""### {row["description"]}\n\n"""
+            + "\n".join(map("* ".__add__, json.loads(row["files"])))
+        )
+
+    readme = """# gists\n\n"""
+    for key, value in days.items():
+        readme += f"""## {key}\n\n\n""" + """\n\n---\n\n""".join(value) + "\n\n"
+
+    return readme
+
+
+def task_readme():
+    """build a readme/index for the contents"""
+    readme = Path(SETTINGS.name, "readme.md")
+
+    def do():
+        readme.write_text(get_readme())
+
+    return dict(
+        actions=[do],
+        file_dep=[".gitmodules"],
+        targets=[readme],
+        setup=["configure_r"],
+        clean=[clean_targets],
+    )
+
+
+if __name__ == "__main__":
+    main(globals())

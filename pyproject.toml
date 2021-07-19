@@ -12,29 +12,27 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 
 requires = [
     "doit",
-    "uritemplate",
     "pydantic",
-    "pandas",
     "typer",
-    "python-dotenv",
-]
-
-[tool.flit.metadata.requires-extra]
-doc = ["jupyter-book", "jupyterbook_latex"]
-mkdocs = ["mkdocs", "mkdocs-jupyter"]
-config = [
-    "configupdater",
-    "doit",
-    "jinja2",
-    "maya",
     "pathspec",
-    "GitPython",
-    "requests_cache",
-    "requests",
-    "ruamel.yaml",
-    "stringcase",
+    "appdirs",
+    "python-dotenv",
+    "sqlite_utils",
 ]
 
+[tool.flit.entrypoints."mee.configure"]
+gist = "mee.compat.gist"
+submodule = "mee.compat.submodule"
+jupyter_book = "mee.compat.jb"
+mkdocs = "mee.compat.mkdocs"
+readme = "mee.compat.readme"
+
+
+[tool.flit.entrypoints."mee.build"]
+sphinx = "mee.compat.sphinx"
+mkdocs = "mee.compat.mkdocs"
+nikola = "mee.compat.nikola"
+jupyterlite = "mee.compat.jupyterlite"
 
 [tool.flit.scripts]
 mee = "mee.__main__:main"

@@ -86,3 +86,34 @@ def merge(a, *b):
 @merge.register
 def merge_type(a: type):
     return merge(*(y for x in a.__mro__ for y in (getattr(x, "__annotations__", {}),)))
+
+
+def requires(*args, **kwargs):
+    from itertools import chain
+    import importlib
+
+    args = list(chain(*map(str.split, args)))
+
+    specs = args + list(kwargs)
+    name = "_".join(specs)
+    deps = args + list(kwargs.values())
+
+    def task_requirements():
+
+        yield dict(
+            name=name,
+            actions=[f"pip install {' '.join(deps)}"],
+            uptodate=list(map(bool, map(importlib.util.find_spec, specs))),
+        )
+
+    task_requirements.__doc__ = f"""install {", ".join(specs)}"""
+    return task_requirements
+
+
+def main(object, *argv):
+    from doit.cmd_base import ModuleTaskLoader
+    from doit.doit_cmd import DoitMain
+
+    if len(argv) == 1:
+        argv = argv[0].split()
+    return DoitMain(ModuleTaskLoader(object)).run(argv or sys.argv[1:])
