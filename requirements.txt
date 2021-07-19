@@ -2,3 +2,4 @@ nox
 flit
 jupyterlab==3.1.0rc1
 jupyterlab-link-share
+jupyter-videochat
