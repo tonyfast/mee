@@ -25,7 +25,9 @@ class Settings(BaseModel):
     name: str = os.getenv("GITHUB_ACTOR")
     branch: str = os.getenv("GITHUB_REF")
     since: str = "six months ago"
-    data_dir: DirectoryPath = Path(appdirs.user_data_dir("Mee", "Deathbeds"))
+    data_dir: DirectoryPath = (
+        CI and Path() or Path(appdirs.user_data_dir("Mee", "Deathbeds"))
+    )
     db: FilePath = data_dir / "mee.sqlite"
     DOIT_CONFIG: dict = Field(default_factory=partial(dict, verbosity=2))
 
