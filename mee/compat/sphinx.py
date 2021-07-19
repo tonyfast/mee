@@ -1,8 +1,4 @@
 from doit.task import clean_targets
-from .. import requires, SETTINGS, main, DOIT_CONFIG
-from pathlib import Path
-
-task_sphinx_r = requires("jupyter-book")
 
 
 def task_conf_py():
@@ -12,7 +8,6 @@ def task_conf_py():
         file_dep=["toc.yml", "config.yml"],
         targets=["conf.py"],
         clean=[clean_targets],
-        setup=["sphinx_r"],
     )
 
 
@@ -26,4 +21,6 @@ def task_sphinx_build():
 
 
 if __name__ == "__main__":
+    from mee import main, DOIT_CONFIG
+
     main(globals())
