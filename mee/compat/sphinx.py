@@ -9,7 +9,7 @@ def task_conf_py():
     """write the sphinx conf.py file"""
     return dict(
         actions=["jb config sphinx --toc toc.yml --config config.yml . > conf.py"],
-        file_dep=[Path(SETTINGS.name, "readme.md"), "toc.yml", "config.yml"],
+        file_dep=["toc.yml", "config.yml"],
         targets=["conf.py"],
         clean=[clean_targets],
         setup=["sphinx_r"],
@@ -19,7 +19,7 @@ def task_conf_py():
 def task_sphinx_build():
     """build the sphinx documentation"""
     return dict(
-        actions=["sphinx-build . _build/html/ -vv"],
+        actions=["sphinx-build . _build/html/ -vv", "touch _build/html/.nojekyll"],
         targets=["_build/html/index.html"],
         file_dep=["conf.py"],
     )
