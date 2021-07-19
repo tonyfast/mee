@@ -14,7 +14,7 @@ each night, `mee` publishes a new version of your work if you created or updated
 1. ask github for new gist information
 2. add gist to your `username/` folder as `git submodule`
 3. generate documentation configuration files
-4. build documentation and deploy to the `gh-pages`
+4. build documentation and deploy to the `gh-pages` branch
 
 ### adding content
 
