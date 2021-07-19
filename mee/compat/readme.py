@@ -1,6 +1,9 @@
 import json
 import collections
+from mee.compat.jb import StdErr
 from pathlib import Path
+
+from pathspec.pathspec import PathSpec
 from ..configure import task_configure_r
 from .. import SETTINGS, main
 from doit.task import clean_targets
@@ -25,10 +28,21 @@ def get_readme():
             continue
         days[format(when, "%D")].append(
             f"""### {row["description"]}\n\n"""
-            + "\n".join(map("* ".__add__, json.loads(row["files"])))
+            + "\n".join(f"""* [{x}]({x})""" for x in json.loads(row["files"]))
         )
+    from re import compile, IGNORECASE
+    from fnmatch import translate
 
-    readme = """# gists\n\n"""
+    try:
+        profile = (
+            next(
+                x for x in Path().glob("*.md") if x.stem.lower() == "readme"
+            ).read_text()
+            + "\n\n---\n\n"
+        )
+    except StopIteration:
+        profile = ""
+    readme = profile + """# gists\n\n"""
     for key, value in days.items():
         readme += f"""## {key}\n\n\n""" + """\n\n---\n\n""".join(value) + "\n\n"
 
