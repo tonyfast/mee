@@ -23,7 +23,7 @@ you'll need to know how to add a [Gist](https://gist.github.com/) to Github, it 
 1. create a gist
 2. work on it throughout the week
 3. get some rest at night and check out your published content in the morning
-    * alternatively, force a build by rerunning the latest github workflow.
+    * alternatively, force a build by [rerunning the latest github workflow](https://docs.github.com/en/actions/managing-workflow-runs/re-running-a-workflow).
 
 ### deployment
 
