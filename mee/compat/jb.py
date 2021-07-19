@@ -187,13 +187,7 @@ def get_toc():
             dict(
                 caption=f"""{when:%D} {row["description"]}""",
                 chapters=[
-                    dict(
-                        file=str(
-                            Path(
-                                db["owners"].get(row["owner"])["login"], row["id"], x
-                            ).with_suffix("")
-                        )
-                    )
+                    dict(file=str(Path(SETTINGS.name, row["id"], x).with_suffix("")))
                     for x in json.loads(row["files"])
                 ],
             )
