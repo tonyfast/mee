@@ -11,12 +11,14 @@ each night, `mee` publishes a new version of your work if you created or updated
 
 ### publishing
 
-1. ask github for new gist information
+1. ask the github api for any of your new or updated works
 2. add gist to your `username/` folder as `git submodule`
 3. generate documentation configuration files
 4. build documentation and deploy to the `gh-pages` branch
 
 ### adding content
+
+you'll need to know how to add a [Gist](https://gist.github.com/) to Github, it is a core Github product that is useful for sharing small projects. you can learn more about [creating gist from the Github documentation](https://docs.github.com/en/github/writing-on-github/editing-and-sharing-content-with-gists/creating-gists).
 
 1. create a gist
 2. work on it throughout the week
