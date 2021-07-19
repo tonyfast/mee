@@ -3,13 +3,14 @@ from pathlib import Path
 from nox import options, parametrize, session
 from .. import SETTINGS
 
-
+ROOT = Path().absolute()
+HERE = Path(__file__).parent.absolute()
 options.sessions = []
 
 
 def prepare(session, mode):
     if mode == "dev":
-        ROOT = Path().absolute()
+
         session.install("flit")
         session.cd("/home/tonyfast/Documents/moi")
         session.run(*"flit install -s --deps production".split())
@@ -28,7 +29,9 @@ def configure(session, mode):
 
 
 @session(reuse_venv=True)
-@parametrize("mode", ["dev", "user", "main"])
-def sphinx(session, mode):
-    prepare(session, mode)
-    session.run(*"python -m mee.compat.sphinx".split(), *session.posargs)
+def sphinx(session):
+    session.install("jupyter-book", "doit")
+    dodo = HERE.parent / "compat" / "sphinx.py"
+    session.run(
+        *"python -m doit".split(), "-f", str(dodo), "-d", str(ROOT), *session.posargs
+    )
