@@ -1,3 +1,4 @@
+import enum
 from pathlib import Path
 
 # from .. import requires, get_NAME
@@ -50,6 +51,9 @@ def get_gists(name=SETTINGS.name, since=SETTINGS.since):
     return requests.get(url)
 
 
+print("db", SETTINGS.db)
+
+
 def write_gists(name=SETTINGS.name, since=SETTINGS.since):
     """write gist content to a sqlite database
 
@@ -67,7 +71,7 @@ def write_gists(name=SETTINGS.name, since=SETTINGS.since):
     owner = db["github-owners"]
     gist = db["gist"]
 
-    for row in response.json():
+    for i, row in enumerate(response.json()):
         owns = row.pop("owner")
         content = row.pop("files")
         files.insert_all(
@@ -85,6 +89,7 @@ def write_gists(name=SETTINGS.name, since=SETTINGS.since):
             pk="html_url",
             replace=True,
         )
+    print(f"loaded {i} gist")
 
 
 def task_gist():
@@ -101,7 +106,6 @@ def task_gist_submodule():
     """load gist as submodules from api data"""
     import sqlite_utils, sqlite3, json
 
-    print(55, Path().absolute())
     db = sqlite_utils.Database(sqlite3.connect(SETTINGS.db))
     table = db["gist"]
     for row in table.rows:
@@ -109,8 +113,7 @@ def task_gist_submodule():
             continue
         if not row["description"]:
             continue
-
-        dir = Path(db["owners"].get(row["owner"])["login"])
+        dir = Path(SETTINGS.name)
         folder = dir / row["id"]
         yield dict(
             name=f"""submodule-add-{row["owner"]}-{row["id"]}""",

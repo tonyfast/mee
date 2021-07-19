@@ -1,4 +1,4 @@
-from .settings import Settings
+from . import SETTINGS
 from . import main
 from doit.task import clean_targets
 
@@ -6,7 +6,7 @@ from doit.task import clean_targets
 def task_delete_mee_database():
     return dict(
         actions=None,
-        targets=[Settings.DATA_DIR / "mee.sqlite"],
+        targets=[SETTINGS.data_dir / "mee.sqlite"],
         clean=[clean_targets],
     )
 
