@@ -1,5 +1,7 @@
 from doit.task import clean_targets
 
+DOIT_CONFIG = dict(verbosity=2)
+
 
 def task_conf_py():
     """write the sphinx conf.py file"""
@@ -14,8 +16,21 @@ def task_conf_py():
 def task_sphinx_build():
     """build the sphinx documentation"""
     return dict(
-        actions=["sphinx-build . _build/html/ -vv", "touch _build/html/.nojekyll"],
+        actions=["sphinx-build . _build/html/", "touch _build/html/.nojekyll"],
         targets=["_build/html/index.html"],
+        file_dep=["conf.py"],
+    )
+
+
+def task_pdf():
+    """build the sphinx documentation"""
+    return dict(
+        actions=[
+            "sphinx-build . _build/latex -b latex",
+            """cd _build/latex && make LATEXMKOPTS="-interaction=nonstopmode -f" """,
+        ],
+        targets=["_build/latex/python.pdf"],
+        clean=[clean_targets],
         file_dep=["conf.py"],
     )
 
