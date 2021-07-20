@@ -134,10 +134,10 @@ class Config(NonNull):
                 default_factory=partial(
                     list,
                     (
-                        # ("tonyfast/**/*.rst", "posts", "post.tmpl"),
-                        ("tonyfast/**/*.md", "posts", "post.tmpl"),
-                        ("tonyfast/**/*.ipynb", "posts", "post.tmpl"),
-                        # ("tonyfast/**/*.html", "posts", "post.tmpl"),
+                        # ("tonyfast/*.rst", "posts", "post.tmpl"),
+                        ("tonyfast/*.md", "posts", "post.tmpl"),
+                        ("tonyfast/*.ipynb", "posts", "post.tmpl"),
+                        # ("tonyfast/*.html", "posts", "post.tmpl"),
                     ),
                 )
             )
