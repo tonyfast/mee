@@ -33,7 +33,13 @@ def sphinx(session):
     session.install("jupyter-book", "doit")
     dodo = HERE.parent / "compat" / "sphinx.py"
     session.run(
-        *"python -m doit".split(), "-f", str(dodo), "-d", str(ROOT), *session.posargs
+        *"python -m doit".split(),
+        "-f",
+        str(dodo),
+        "-d",
+        str(ROOT),
+        *session.posargs,
+        success_codes=[0, 2]
     )
 
 
