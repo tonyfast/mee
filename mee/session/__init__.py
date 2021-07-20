@@ -48,3 +48,10 @@ def nikola(session):
     session.install("nikola", "ruamel.yaml", "notebook")
 
     session.run(*"python -m nikola".split(), *session.posargs or ["build"])
+
+
+@session(reuse_venv=True)
+def mkdocs(session):
+    session.install("mkdocs", "mkdocs-jupyter")
+
+    session.run(*"mkdocs".split(), *session.posargs or ["build"])
