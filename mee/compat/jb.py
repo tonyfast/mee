@@ -122,8 +122,30 @@ class Config(NonNull):
     class Buttons(BaseModel):
         pass
 
-    class Sphinx(BaseModel):
-        pass
+    class Sphinx(NonNull):
+        class Nikola(NonNull):
+            BLOG_AUTHOR: str
+            BLOG_TITLE: str
+            SITE_URL: Optional[AnyUrl]
+            BLOG_EMAIL: Optional[str]
+            BLOG_DESCRIPTION: str
+            DEFAULT_LANG: str = "en"
+            POSTS: list = Field(
+                default_factory=partial(
+                    list,
+                    (
+                        # ("tonyfast/**/*.rst", "posts", "post.tmpl"),
+                        ("tonyfast/**/*.md", "posts", "post.tmpl"),
+                        ("tonyfast/**/*.ipynb", "posts", "post.tmpl"),
+                        # ("tonyfast/**/*.html", "posts", "post.tmpl"),
+                    ),
+                )
+            )
+            PAGES: list = Field(default_factory=list)
+
+        extra_extensions: Optional[list]
+        local_extensions: Optional[list]
+        config: Nikola = Field(default_factory=Nikola)
 
     class Repository(BaseModel):
         pass
@@ -142,6 +164,7 @@ class Config(NonNull):
     repository: Optional[Repository] = Field(default_factory=Repository)
     launch_buttons: Optional[Buttons] = Field(default_factory=Buttons)
     latex: Optional[Latex] = Field(default_factory=Latex)
+    sphinx: Sphinx = Field(default_factory=Sphinx)
 
 
 def get_toc():
@@ -174,7 +197,17 @@ def get_toc():
 
 
 def get_config():
-    return Config(name=SETTINGS.name, title=SETTINGS.name)
+    return Config(
+        name=SETTINGS.name,
+        title=SETTINGS.name,
+        sphinx=Config.Sphinx(
+            config=Config.Sphinx.Nikola(
+                BLOG_AUTHOR=SETTINGS.name,
+                BLOG_TITLE=SETTINGS.name,
+                BLOG_DESCRIPTION=SETTINGS.name,
+            )
+        ),
+    )
 
 
 task_yaml_r = tools.requires(ruamel="ruamel.yaml")

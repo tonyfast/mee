@@ -35,3 +35,10 @@ def sphinx(session):
     session.run(
         *"python -m doit".split(), "-f", str(dodo), "-d", str(ROOT), *session.posargs
     )
+
+
+@session(reuse_venv=True)
+def nikola(session):
+    session.install("nikola", "ruamel.yaml", "notebook")
+
+    session.run(*"python -m nikola".split(), *session.posargs or ["build"])

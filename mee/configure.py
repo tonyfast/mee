@@ -1,4 +1,4 @@
-import enum
+from doit import create_after
 from pathlib import Path
 
 # from .. import requires, get_NAME
@@ -51,9 +51,6 @@ def get_gists(name=SETTINGS.name, since=SETTINGS.since):
     return requests.get(url)
 
 
-print("db", SETTINGS.db)
-
-
 def write_gists(name=SETTINGS.name, since=SETTINGS.since):
     """write gist content to a sqlite database
 
@@ -102,6 +99,7 @@ def task_gist():
     )
 
 
+@create_after("gist")
 def task_gist_submodule():
     """load gist as submodules from api data"""
     import sqlite_utils, sqlite3, json
@@ -126,5 +124,7 @@ def task_gist_submodule():
 from .compat.jb import *
 from .compat.readme import *
 
+create_after("gist_submodule")(task_jb)
+create_after("gist_submodule")(task_readme)
 if __name__ == "__main__":
     main(globals())
