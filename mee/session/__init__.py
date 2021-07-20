@@ -39,7 +39,7 @@ def sphinx(session):
         "-d",
         str(ROOT),
         *session.posargs,
-        success_codes=[0, 2]
+        success_codes=[0, 1]
     )
 
 
