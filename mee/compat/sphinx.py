@@ -13,8 +13,8 @@ def task_conf_py():
     )
 
 
-def task_sphinx_build():
-    """build the sphinx documentation"""
+def task_html():
+    """build the html sphinx documentation"""
     return dict(
         actions=["sphinx-build . _build/html/", "touch _build/html/.nojekyll"],
         targets=["_build/html/index.html"],
@@ -23,7 +23,7 @@ def task_sphinx_build():
 
 
 def task_pdf():
-    """build the sphinx documentation"""
+    """build the pdf sphinx documentation"""
     return dict(
         actions=[
             "sphinx-build . _build/latex -b latex",
