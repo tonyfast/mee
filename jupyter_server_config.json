@@ -1,0 +1,11 @@
+{
+  "VideoChat": {
+    "room_prefix": "qed",
+    "rooms": [
+      {
+        "id": "class",
+        "displayName": "class room",
+        "description": "writers workshop class room"
+      }
+  }
+}
