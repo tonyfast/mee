@@ -1,6 +1,6 @@
 {
     "VideoChat": {
-        "room_prefix": "qed",
+        "room_prefix": "writers-workshop",
         "rooms": [
             {
                 "id": "class",
