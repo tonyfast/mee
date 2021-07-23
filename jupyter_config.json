@@ -1,4 +1,14 @@
 {
+    "VideoChat": {
+        "room_prefix": "writers-workshop",
+        "rooms": [
+            {
+                "id": "class",
+                "displayName": "class room",
+                "description": "writers workshop class room"
+            }
+        ]
+    },
     "LabApp": {
         "collaborative": true
     }
