@@ -1,9 +1,9 @@
 {
     "VideoChat": {
-        "room_prefix": "writers-workshop",
+        "room_prefix": "litprog-writers-workshop",
         "rooms": [
             {
-                "id": "class",
+                "id": "bounce-house",
                 "displayName": "class room",
                 "description": "writers workshop class room"
             }
